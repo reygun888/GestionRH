@@ -22,6 +22,9 @@ class TypeAbsence
     #[ORM\OneToMany(mappedBy: 'typeAbsenceId', targetEntity: Absence::class)]
     private Collection $absences;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $date_absence = null;
+
     public function __construct()
     {
         $this->absences = new ArrayCollection();
@@ -70,6 +73,18 @@ class TypeAbsence
                 $absence->setTypeAbsenceId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateAbsence(): ?\DateTimeInterface
+    {
+        return $this->date_absence;
+    }
+
+    public function setDateAbsence(\DateTimeInterface $date_absence): static
+    {
+        $this->date_absence = $date_absence;
 
         return $this;
     }

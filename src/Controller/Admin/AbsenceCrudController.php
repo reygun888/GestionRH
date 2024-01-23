@@ -23,9 +23,10 @@ class AbsenceCrudController extends AbstractCrudController
         return [
             DateTimeField::new("date_debut_at", "Date de début"),
             DateTimeField::new("date_fin_at", "Date de fin"),
-            BooleanField::new("statut","Absence justifiée ?"),
-/*             AssociationField::new("type_absence","Type d'absence") */
-                
+            BooleanField::new("statut", "Absence justifiée ?"),
+            AssociationField::new("typeAbsence", "Motif de l'absence")
+                ->setCrudController(TypeAbsenceCrudController::class),
+
             AssociationField::new("employe", "Employé")
                 ->setLabel("Employé")
                 ->setRequired(true)
@@ -35,5 +36,4 @@ class AbsenceCrudController extends AbstractCrudController
                 })
         ];
     }
-
 }
