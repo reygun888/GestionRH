@@ -30,11 +30,11 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: HeuresSup::class)]
     private Collection $heuresSups;
 
-    #[ORM\OneToMany(mappedBy: 'employeId', targetEntity: Absence::class)]
+    #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Absence::class)]
     private Collection $absences;
 
     #[ORM\ManyToOne(inversedBy: 'employe')]
-    private ?Absence $absence = null;
+    private ?Personnel $personnel = null;
 
     public function __construct()
     {
@@ -52,12 +52,6 @@ class Employe
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
-
-        return $this;
-    }
 
     public function getPrenom(): ?string
     {
@@ -125,7 +119,7 @@ class Employe
         return $this;
     }
 
-    /**
+/**
      * @return Collection<int, Absence>
      */
     public function getAbsences(): Collection
@@ -137,7 +131,7 @@ class Employe
     {
         if (!$this->absences->contains($absence)) {
             $this->absences->add($absence);
-            $absence->setEmployeId($this);
+            $absence->setEmploye($this);
         }
 
         return $this;
@@ -147,8 +141,8 @@ class Employe
     {
         if ($this->absences->removeElement($absence)) {
             // set the owning side to null (unless already changed)
-            if ($absence->getEmployeId() === $this) {
-                $absence->setEmployeId(null);
+            if ($absence->getEmploye() === $this) {
+                $absence->setEmploye(null);
             }
         }
 
@@ -163,6 +157,30 @@ class Employe
     public function setAbsence(?Absence $absence): static
     {
         $this->absence = $absence;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->personnel ? $this->personnel->getEmail() : null;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPersonnel(): ?Personnel
+    {
+        return $this->personnel;
+    }
+
+    public function setPersonnel(?Personnel $personnel): static
+    {
+        $this->personnel = $personnel;
 
         return $this;
     }

@@ -29,6 +29,9 @@ class Personnel implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Employe $employe = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,5 +100,17 @@ class Personnel implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getEmploye(): ?Employe
+    {
+        return $this->employe;
+    }
+
+    public function setEmploye(?Employe $employe): static
+    {
+        $this->employe = $employe;
+
+        return $this;
     }
 }
