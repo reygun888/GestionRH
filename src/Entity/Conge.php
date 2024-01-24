@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CongeRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CongeRepository::class)]
@@ -16,8 +17,15 @@ class Conge
     #[ORM\Column(length: 255)]
     private ?string $type_conge = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $regles = null;
+    #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'conges')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Employe $employe = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $dateDebutAt = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $dateFinAt = null;
 
     public function getId(): ?int
     {
@@ -36,14 +44,38 @@ class Conge
         return $this;
     }
 
-    public function getRegles(): ?string
+    public function getEmploye(): ?Employe
     {
-        return $this->regles;
+        return $this->employe;
     }
 
-    public function setRegles(string $regles): static
+    public function setEmploye(Employe $employe): static
     {
-        $this->regles = $regles;
+        $this->employe = $employe;
+
+        return $this;
+    }
+
+    public function getDateDebutAt(): ?\DateTimeInterface
+    {
+        return $this->dateDebutAt;
+    }
+
+    public function setDateDebutAt(\DateTimeInterface $dateDebutAt): static
+    {
+        $this->dateDebutAt = $dateDebutAt;
+
+        return $this;
+    }
+
+    public function getDateFinAt(): ?\DateTimeInterface
+    {
+        return $this->dateFinAt;
+    }
+
+    public function setDateFinAt(\DateTimeInterface $dateFinAt): static
+    {
+        $this->dateFinAt = $dateFinAt;
 
         return $this;
     }

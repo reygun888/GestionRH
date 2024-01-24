@@ -3,13 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Absence;
-use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+
 
 class AbsenceCrudController extends AbstractCrudController
 {
@@ -24,9 +23,7 @@ class AbsenceCrudController extends AbstractCrudController
             DateTimeField::new("date_debut_at", "Date de début"),
             DateTimeField::new("date_fin_at", "Date de fin"),
             BooleanField::new("statut", "Absence justifiée ?"),
-            AssociationField::new("typeAbsence", "Motif de l'absence")
-                ->setCrudController(TypeAbsenceCrudController::class),
-
+            TextareaField::new("motif", "Motif"),
             AssociationField::new("employe", "Employé")
                 ->setLabel("Employé")
                 ->setRequired(true)

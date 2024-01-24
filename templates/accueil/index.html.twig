@@ -3,9 +3,19 @@
 {% block title %}Hello AccueilController!{% endblock %}
 
 {% block body %}
-{% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-        </div>
+	{% if not app.user %}
+		{% set targetPath = path('connexion') %}
+		{% if app.request.query.has('redirect_to') %}
+			{% set targetPath = app.request.query.get('redirect_to') %}
+		{% endif %}
+
+		<script>
+			setTimeout(function () {
+window.location.href = '{{ targetPath }}';
+}, 0);
+		</script>
+	{% endif %}
+    {% if app.user %}
+<p>Connecté en tant que {{ app.user.userIdentifier }}</p>  <a href="{{ path('app_logout') }}">Logout</a>
     {% endif %}
 {% endblock %}

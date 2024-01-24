@@ -19,14 +19,11 @@ class AbsenceType extends AbstractType
             ->add('dateDebutAt')
             ->add('dateFinAt')
             ->add('statut')
-            ->add('typeAbsence', EntityType::class, [
-                'class' => TypeAbsence::class,
-'choice_label' => 'id',
-            ])
             ->add('employe', EntityType::class, [
                 'class' => Employe::class,
 'choice_label' => 'id',
             ])
+            ->add("motif")
             ->add("submit",SubmitType::class,[
                 "label" => "Envoyer",
             ])    

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AbsenceRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AbsenceRepository::class)]
@@ -19,14 +20,15 @@ class Absence
     #[ORM\Column]
     private ?\DateTimeImmutable $dateFinAt = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     private ?string $statut = null;
 
-    #[ORM\ManyToOne(inversedBy: 'absences')]
-    private ?TypeAbsence $typeAbsence = null;
 
     #[ORM\ManyToOne(inversedBy: 'absences')]
     private ?Employe $employe = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $motif = null;
 
     public function getId(): ?int
     {
@@ -69,17 +71,6 @@ class Absence
         return $this;
     }
 
-    public function getTypeAbsence(): ?TypeAbsence
-    {
-        return $this->typeAbsence;
-    }
-
-    public function setTypeAbsence(?TypeAbsence $typeAbsence): static
-    {
-        $this->typeAbsence = $typeAbsence;
-
-        return $this;
-    }
 
     public function getEmploye(): ?Employe
     {
@@ -89,6 +80,18 @@ class Absence
     public function setEmploye(?Employe $employe): static
     {
         $this->employe = $employe;
+
+        return $this;
+    }
+
+    public function getMotif(): ?string
+    {
+        return $this->motif;
+    }
+
+    public function setMotif(?string $motif): static
+    {
+        $this->motif = $motif;
 
         return $this;
     }

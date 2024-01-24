@@ -8,7 +8,6 @@ use App\Entity\Employe;
 use App\Entity\HeuresSup;
 use App\Entity\Personnel;
 use App\Entity\Rapport;
-use App\Entity\TypeAbsence;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -45,7 +44,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud("Employe", "fa fa-user",Employe::class);
         yield MenuItem::linkToCrud("HeuresSup","fa fa-clock",HeuresSup::class);
         yield MenuItem::linkToCrud("Rapport", "fa fa-file", Rapport::class);
-        yield MenuItem::linkToCrud("Motif d'absence", "fa fa-file-signature",TypeAbsence::class);
         yield MenuItem::linkToCrud("Personnel", "fa fa-users", Personnel::class);
 
     }

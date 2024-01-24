@@ -36,6 +36,7 @@ class Employe
     #[ORM\ManyToOne(inversedBy: 'employe')]
     private ?Personnel $personnel = null;
 
+
     public function __construct()
     {
         $this->heuresSups = new ArrayCollection();
@@ -51,7 +52,14 @@ class Employe
     {
         return $this->nom;
     }
+    
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
 
+        return $this;
+    }
+    
 
     public function getPrenom(): ?string
     {
@@ -184,4 +192,5 @@ class Employe
 
         return $this;
     }
+
 }

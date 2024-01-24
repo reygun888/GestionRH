@@ -4,13 +4,16 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         
-        {% block stylesheets %} {% endblock %}
+        {% block stylesheets %}
+        <link rel="stylesheet" href="{{asset("styles/app.css")}}"
+         {% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
 
         {% block javascripts %} 
-                <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js" integrity="sha256-J37ZtjEw94oWBNZ9w/XC73raGXE9t10//XHJfKz2QCM=" crossorigin="anonymous"></script>
+                <script src="{{asset("/app.js")}}"></script>
+                
         {% endblock %}
     </body>
 </html>
