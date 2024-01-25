@@ -44,6 +44,9 @@ class Employe implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+    #[ORM\Column(type:"boolean")]
+    private bool $firstLogin = True;
+
 
 
     public function __construct()
@@ -242,5 +245,31 @@ class Employe implements PasswordAuthenticatedUserInterface, UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function isFirstLogin():bool
+    {
+        return $this->firstLogin;
+    }
+
+    public function setFirstLogin(bool $firstLogin):self
+    {
+        $this->firstLogin = $firstLogin;
+
+        return $this;
+    }
+
+    private $plainPassword;
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
     }
 }

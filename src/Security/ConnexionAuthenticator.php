@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Employe;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +45,16 @@ class ConnexionAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+         // Récupérer l'utilisateur
+         $user = $token->getUser();
+
+         // Rediriger en fonction du premier login
+         if ($user instanceof Employe && $user->isFirstLogin()) {
+             return new RedirectResponse($this->urlGenerator->generate('changeMdp'));
+         }
+ 
+         // Sinon, rediriger vers une autre page après la connexion réussie
+         return new RedirectResponse($this->getTargetPath($request->getSession(), $firewallName) ?: $this->urlGenerator->generate('accueil'));
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
