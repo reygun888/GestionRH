@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AccueilController!{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block body %}
 	{% if not app.user %}
@@ -16,6 +16,6 @@ window.location.href = '{{ targetPath }}';
 		</script>
 	{% endif %}
     {% if app.user %}
-<p>Connecté en tant que {{ app.user.userIdentifier }}</p>  <a href="{{ path('app_logout') }}">Logout</a>
+<p>Connecté en tant que {{ app.user.userIdentifier }}</p>  <a href="{{ path('app_logout') }}">Logout</a><br>
     {% endif %}
 {% endblock %}

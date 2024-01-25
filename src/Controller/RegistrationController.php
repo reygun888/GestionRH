@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Personnel;
+use App\Entity\Employe;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,25 +13,25 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/register', name: 'register')]
+    #[Route('/inscription', name: 'inscription')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new Personnel();
+        $user = new Employe();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
+            // encoder le mot de passe
+            $encodedPassword = $userPasswordHasher->hashPassword(
+                $user,
+                $form->get('plainPassword')->getData() // Supposant que vous avez un champ nommé 'password' dans votre formulaire
             );
+
+            $user->setPassword($encodedPassword);
 
             $entityManager->persist($user);
             $entityManager->flush();
-            // do anything else you need here, like send an email
+            // effectuer toute autre opération nécessaire, comme l'envoi d'un e-mail
 
             return $this->redirectToRoute('accueil');
         }

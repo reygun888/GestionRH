@@ -6,9 +6,11 @@ use App\Repository\EmployeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: EmployeRepository::class)]
-class Employe
+class Employe implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,10 +23,10 @@ class Employe
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $departement = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $poste = null;
 
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: HeuresSup::class)]
@@ -33,8 +35,15 @@ class Employe
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Absence::class)]
     private Collection $absences;
 
-    #[ORM\ManyToOne(inversedBy: 'employe')]
-    private ?Personnel $personnel = null;
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $roles = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
 
 
     public function __construct()
@@ -52,14 +61,14 @@ class Employe
     {
         return $this->nom;
     }
-    
+
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
 
         return $this;
     }
-    
+
 
     public function getPrenom(): ?string
     {
@@ -127,7 +136,7 @@ class Employe
         return $this;
     }
 
-/**
+    /**
      * @return Collection<int, Absence>
      */
     public function getAbsences(): Collection
@@ -171,7 +180,7 @@ class Employe
 
     public function getEmail(): ?string
     {
-        return $this->personnel ? $this->personnel->getEmail() : null;
+        return $this->email;
     }
 
     public function setEmail(string $email): static
@@ -181,16 +190,57 @@ class Employe
         return $this;
     }
 
-    public function getPersonnel(): ?Personnel
+    public function getRoles(): array
     {
-        return $this->personnel;
+        // Convertissez la chaîne de rôles en tableau, si elle n'est pas déjà un tableau.
+        return is_array($this->roles) ? $this->roles : explode(',', $this->roles);
     }
 
-    public function setPersonnel(?Personnel $personnel): static
+    public function setRoles(string $roles): static
     {
-        $this->personnel = $personnel;
+        $this->roles = $roles;
 
         return $this;
     }
 
+    public function getRolesAsString(): string
+    {
+        return implode(', ', $this->getRoles());
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->email;
+    }
+
+    public function getSalt()
+    {
+        // vous pouvez retourner une chaîne unique pour le sel
+        return null;
+    }
+
+
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
 }
