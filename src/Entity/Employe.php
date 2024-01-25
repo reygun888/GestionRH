@@ -38,8 +38,8 @@ class Employe implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $roles = null;
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $roles = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
@@ -195,20 +195,14 @@ class Employe implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getRoles(): array
     {
-        // Convertissez la chaîne de rôles en tableau, si elle n'est pas déjà un tableau.
-        return is_array($this->roles) ? $this->roles : explode(',', $this->roles);
+        return $this->roles ?? [];
     }
-
-    public function setRoles(string $roles): static
+    
+    public function setRoles(?array $roles): self
     {
         $this->roles = $roles;
-
+    
         return $this;
-    }
-
-    public function getRolesAsString(): string
-    {
-        return implode(', ', $this->getRoles());
     }
 
     public function getUserIdentifier(): string

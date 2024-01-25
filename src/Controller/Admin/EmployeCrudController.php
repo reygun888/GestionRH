@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class EmployeCrudController extends AbstractCrudController
@@ -33,12 +35,14 @@ class EmployeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+
         $fields = [
             TextField::new('nom'),
             TextField::new('prenom'),
             TextField::new("email"),
             TextField::new("departement"),
             TextField::new("poste"),
+            ArrayField::new("roles", "Rôles"),
             BooleanField::new("first_login", "Première connexion ?"),
         ];
 
