@@ -9,7 +9,9 @@
 
 {# Afficher les erreurs du formulaire #}
 {% if form_errors(form)|length > 0 %}
-    <div class="alert alert-danger">
+    <div class="alert alert-{{label}}"> 
+     {{message}}
+    </div>
         <ul>
             {% for error in form_errors(form) %}
                 <li>{{ error.message }}</li>

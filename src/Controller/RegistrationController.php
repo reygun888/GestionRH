@@ -14,30 +14,42 @@ use Symfony\Component\Routing\Annotation\Route;
 class RegistrationController extends AbstractController
 {
     #[Route('/inscription', name: 'inscription')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $emi): Response
     {
+        $this->emi = $emi;
+
         $user = new Employe();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encoder le mot de passe
-            $encodedPassword = $userPasswordHasher->hashPassword(
-                $user,
-                $form->get('plainPassword')->getData() // Supposant que vous avez un champ nommé 'password' dans votre formulaire
-            );
 
-            $user->setPassword($encodedPassword);
+            // Vérifier via l'email si l'utilisateur existe ou non 
 
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // effectuer toute autre opération nécessaire, comme l'envoi d'un e-mail
+            $userExist = $this->emi->getRepository(Employe::class)->findOneBy(["email" => $user->getEmail()]);
 
-            return $this->redirectToRoute('accueil');
+            if (!$userExist) {
+                // encoder le mot de passe
+                $encodedPassword = $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                );
+
+                $user->setPassword($encodedPassword);
+
+                $emi->persist($user);
+                $emi->flush();
+                // effectuer toute autre opération nécessaire, comme l'envoi d'un e-mail
+
+                $this->addFlash("success", "Utilisateur créé avec succès");
+
+                return $this->redirectToRoute('connexion');
+            }else{
+                $this->addFlash("error","Cette adresse mail est déjà utilisée");
+            }
         }
-
         return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 }

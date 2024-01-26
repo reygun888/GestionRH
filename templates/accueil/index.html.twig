@@ -18,4 +18,7 @@ window.location.href = '{{ targetPath }}';
     {% if app.user %}
 <p>Connecté en tant que {{ app.user.userIdentifier }}</p>  <a href="{{ path('app_logout') }}">Logout</a><br>
     {% endif %}
+	{% if is_granted("ROLE_ADMIN") %}
+		<a href="{{ path('admin') }}">Admin</a>
+	{% endif %}
 {% endblock %}

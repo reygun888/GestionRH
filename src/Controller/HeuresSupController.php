@@ -2,15 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Absence;
-use App\Form\AbsenceType;
+use App\Entity\HeuresSup;
+use App\Form\HeuresSupType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AbsenceController extends AbstractController
+class HeuresSupController extends AbstractController
 {
     private $entityManager;
 
@@ -19,7 +19,7 @@ class AbsenceController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/absence', name: 'absence')]
+    #[Route('/heuresSup', name: 'heuresSup')]
     public function index(Request $request): Response
     {
         // Récupérer l'utilisateur connecté
@@ -31,14 +31,14 @@ class AbsenceController extends AbstractController
             return $this->redirectToRoute('connexion');
         }
     
-        // Création d'une nouvelle instance de l'entité Absence
-        $absence = new Absence();
+        // Création d'une nouvelle instance de l'entité HeuresSup
+        $heuresSup = new HeuresSup();
     
-        // Associer l'employé connecté à l'absence
-        $absence->setEmploye($user);
+        // Associer l'employé connecté à l'HeuresSup
+        $heuresSup->setEmploye($user);
     
         // Création du formulaire
-        $form = $this->createForm(AbsenceType::class, $absence);
+        $form = $this->createForm(HeuresSupType::class, $heuresSup);
     
         // Gestion de la soumission du formulaire
         $form->handleRequest($request);
@@ -46,15 +46,15 @@ class AbsenceController extends AbstractController
         // Vérifier si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
             // Enregistrement en base de données
-            $this->entityManager->persist($absence);
+            $this->entityManager->persist($heuresSup);
             $this->entityManager->flush();
     
             // Redirection ou autre logique après l'enregistrement
-            return $this->redirectToRoute('absence');
+            return $this->redirectToRoute('heuresSup');
         }
     
         // Affichage du formulaire dans le template
-        return $this->render('absence/index.html.twig', [
+        return $this->render('heures_sup/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }
