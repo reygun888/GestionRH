@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil
+{% endblock %}
 
 {% block body %}
 	{% if not app.user %}
@@ -15,10 +16,123 @@ window.location.href = '{{ targetPath }}';
 }, 0);
 		</script>
 	{% endif %}
-    {% if app.user %}
-<p>Connecté en tant que {{ app.user.userIdentifier }}</p>  <a href="{{ path('app_logout') }}">Logout</a><br>
-    {% endif %}
+	{% if app.user %}
+		<p>Connecté en tant que
+			{{ app.user.userIdentifier }}</p>
+		<a href="{{ path('app_logout') }}">Logout</a><br>
+	{% endif %}
 	{% if is_granted("ROLE_ADMIN") %}
 		<a href="{{ path('admin') }}">Admin</a>
 	{% endif %}
+
+	<section class="tab">
+		<div class="cont">
+			<div class="left">
+				<div class="calendar">
+					<div class="month">
+						<i class="fas fa-angle-left prev"></i>
+						<div class="date">December 2015</div>
+						<i class="fas fa-angle-right next"></i>
+					</div>
+					<div class="weekdays">
+						<div>Dimanche</div>
+						<div>Lundi</div>
+						<div>Mardi</div>
+						<div>Mercredi</div>
+						<div>Jeudi</div>
+						<div>Vendredi</div>
+						<div>Samedi</div>
+					</div>
+					<div class="days"></div>
+					<div class="goto-today">
+						<div class="goto">
+							<input type="text" placeholder="mm/yyyy" class="date-input"/>
+							<button class="goto-btn">Go</button>
+						</div>
+						<button class="today-btn">Aujourd'hui</button>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="today-date">
+					<div class="event-day">Mer</div>
+					<div class="event-date">12 décembre 2022</div>
+				</div>
+				<div class="welcome text-center">
+					Bonjour,
+					{{ app.user.getNom() }}
+					{{ app.user.getPrenom() }}
+				</div>
+				<div class="events"></div>
+				<div class="add-event-wrapper">
+					<div class="add-event-header">
+						<div class="title">Demande</div>
+						<i class="fas fa-times close"></i>
+					</div>
+					<div class="add-event-body p-1">
+						<div class="test mx-5 p-3">
+                                                            {{form_start(form)}}
+							<div class="add-event-test">
+								<div class="row mb-2">
+									<div class="col-3">
+										<p class="col-form-label">Début</p>
+									</div>
+									<div class="col-8">
+										{{form_row(form.dateDebutAt)}}
+										</div>
+									</div>
+
+									<div class="row mb-2">
+										<div class="col-3">
+											<p class="col-form-label">Retour</p>
+										</div>
+										<div class="col-8">
+											{{form_row(form.dateFinAt)}}
+											</div>
+										</div>
+
+										<div class="row mb-2">
+											<div class="col-3">
+												<p class="col-form-label">Absence justifiée ?</p>
+											</div>
+											<div class="col-8">
+												{{form_row(form.statut)}}
+												</div>
+											</div>
+
+											<div class="row mb-2">
+												<div class="col-3">
+													<p class="col-form-label">Motif</p>
+												</div>
+												<div class="col-8">
+													{{form_row(form.motif)}}
+													</div>
+												</div>
+
+												<div class="row mb-2">
+													<div class="col-12">
+														{{ form_row(form.submit) }}
+													</div>
+												</div>
+                                                {{form_end(form) }}
+											</div>
+										</div>
+									</div>
+								</div>
+								<button class="add-event">
+									<i class="fas fa-plus"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script>
+		$(document).ready(function () {
+$('.datepicker').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+});
+	</script>
 {% endblock %}

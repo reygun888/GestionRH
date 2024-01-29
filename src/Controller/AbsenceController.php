@@ -37,7 +37,7 @@ class AbsenceController extends AbstractController
         // Associer l'employé connecté à l'absence
         $absence->setEmploye($user);
     
-        // Création du formulaire
+        // Création du formulaire en dehors de la condition de soumission du formulaire
         $form = $this->createForm(AbsenceType::class, $absence);
     
         // Gestion de la soumission du formulaire
@@ -54,7 +54,7 @@ class AbsenceController extends AbstractController
         }
     
         // Affichage du formulaire dans le template
-        return $this->render('absence/index.html.twig', [
+        return $this->render('accueil/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }

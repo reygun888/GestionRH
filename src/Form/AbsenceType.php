@@ -10,24 +10,31 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextType as TypeTextType;
 
 class AbsenceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('dateDebutAt')
-            ->add('dateFinAt')
-            ->add('statut', CheckboxType::class, [
-                'label' => 'Statut',
-                'required' => false, // Pour permettre la case à cocher non obligatoire
+            ->add('dateDebutAt',DateTimeType::class,[
+                "label" => false
             ])
+            ->add('dateFinAt',DateTimeType::class,[
+                "label" => false
+            ] )
             ->add('employe', EntityType::class, [
                 'class' => Employe::class,
                 'choice_label' => 'nom', // ou tout autre champ que vous voulez afficher
                 'disabled' => true, // Empêcher l'utilisateur de changer l'employé
             ])
-            ->add('motif')
+            ->add("statut", CheckboxType::class,[
+                "label" => false
+            ])
+            ->add('motif', TypeTextType::class,[
+                "label" => false
+            ])
             ->add("submit", SubmitType::class, [
                 "label" => "Envoyer",
             ]);
