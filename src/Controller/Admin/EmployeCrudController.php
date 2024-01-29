@@ -9,11 +9,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class EmployeCrudController extends AbstractCrudController
-{
+{   
+
+    public function verifRole (AuthorizationCheckerInterface $authorizationChecker){
+        if(!$authorizationChecker -> isGranted("ROLE_ADMIN")){
+            throw $this->createAccessDeniedException("Accès réfusé.");
+        }
+    }
+
     private UserPasswordHasherInterface $passwordEncoder;
 
     public function __construct(UserPasswordHasherInterface $passwordEncoder)

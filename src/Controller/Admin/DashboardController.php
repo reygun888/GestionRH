@@ -30,7 +30,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('GestionRh');
+            ->setTitle('Espace Admin');
     }
 
     public function configureMenuItems(): iterable
