@@ -21,28 +21,18 @@ class AbsenceRepository extends ServiceEntityRepository
         parent::__construct($registry, Absence::class);
     }
 
-//    /**
-//     * @return Absence[] Returns an array of Absence objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAbsencesForMonth(int $year, int $month): array
+{
+    // Créer les dates de début et de fin du mois spécifié
+    $startDate = new \DateTime("$year-$month-01 00:00:00");
+    $endDate = (clone $startDate)->modify('last day of this month')->setTime(23, 59, 59);
 
-//    public function findOneBySomeField($value): ?Absence
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    return $this->createQueryBuilder('a')
+        ->andWhere('a.dateDebutAt BETWEEN :startDate AND :endDate')
+        ->orWhere('a.dateFinAt BETWEEN :startDate AND :endDate')
+        ->setParameter('startDate', $startDate)
+        ->setParameter('endDate', $endDate)
+        ->getQuery()
+        ->getResult();
+}
 }
