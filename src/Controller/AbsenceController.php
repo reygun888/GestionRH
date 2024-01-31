@@ -54,7 +54,7 @@ class AbsenceController extends AbstractController
         }
     
         // Affichage du formulaire dans le template
-        return $this->render('accueil/index.html.twig', [
+        return $this->render('absence/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }

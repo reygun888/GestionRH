@@ -26,36 +26,23 @@ class AccueilController extends AbstractController
     #[Route('/', name: 'accueil')]
     public function index(Request $request): Response
     {
-                // Récupérer les données d'absence depuis votre repository AbsenceRepository
-        $absences = $this->absenceRepository->findAll();
-
-        // Convertir les données d'absence en tableau associatif
-        $absencesArray = [];
-        foreach ($absences as $absence) {
-            $absencesArray[] = [
-                'dateDebutAt' => $absence->getDateDebutAt()->format('Y-m-d'),
-                'dateFinAt' => $absence->getDateFinAt()->format('Y-m-d'),
-                'statut' => $absence->getStatut(),
-                // Ajoutez d'autres champs d'absence si nécessaire
-            ];
-        }
-
-        // Transmettre les données d'absence à la vue Twig
-        return $this->render('accueil/index.html.twig', [
-            'absencesData' => json_encode($absencesArray)
-        ]);
+        // Récupérer l'utilisateur connecté
         $user = $this->getUser();
 
+        // Vérifier si l'utilisateur est connecté
         if (!$user) {
             return $this->redirectToRoute('connexion');
         }
 
+        // Créer une nouvelle instance d'absence et associer l'employé connecté
         $absence = new Absence();
         $absence->setEmploye($user);
 
+        // Créer le formulaire d'absence
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
+        // Traiter la soumission du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($absence);
             $this->entityManager->flush();
@@ -63,6 +50,7 @@ class AccueilController extends AbstractController
             return $this->redirectToRoute('accueil');
         }
 
+        // Récupérer les absences de l'utilisateur
         $absences = $this->absenceRepository->findBy([
             "employe" => $user,
         ]);
@@ -72,32 +60,40 @@ class AccueilController extends AbstractController
         $currentMonth = date('m');
         $currentAbsences = $this->absenceRepository->findAbsencesForMonth($currentYear, $currentMonth);
 
-        
+        // Récupérer toutes les absences
+        $allAbsences = $this->absenceRepository->findAll();
 
+        // Convertir les données d'absence en tableau associatif
+        // Encodez les données d'absence en JSON
+        $absencesArray = [];
+        foreach ($allAbsences as $absence) {
+            // Récupérer l'employé associé à l'absence
+            $employe = $absence->getEmploye();
+            if ($employe !== null) {
+                $absencesArray[] = [
+                    'dateDebutAt' => $absence->getDateDebutAt()->format('Y-m-d'),
+                    'dateFinAt' => $absence->getDateFinAt()->format('Y-m-d'),
+                    'statut' => $absence->getStatut(),
+                    "motif" => $absence->getMotif(),
+                    "employe" => [
+                        'nom' => $employe->getNom(),
+                        // Ajoutez d'autres champs d'employé si nécessaire
+                    ]
+                    // Ajoutez d'autres champs d'absence si nécessaire
+                ];
+            } else {
+                // Traitez le cas où l'employé est null
+            }
+        }
+
+        $absencesJson = json_encode($absencesArray);
+
+        // Rendre la vue avec les données nécessaires
         return $this->render('accueil/index.html.twig', [
             'form' => $form->createView(),
             "absences" => $absences,
-            "currentAbsences" => $currentAbsences // Ajoutez les absences pour le mois actuel
+            "currentAbsences" => $currentAbsences,
+            'absencesData' => $absencesJson  // Transmettez les données JSON à la vue
         ]);
     }
-    
-    #[Route("/get_absences", name:"get_absences")]
-    public function getAbsencesForMonth(Request $request): JsonResponse
-    {
-        // Récupérer la date du mois spécifié depuis la requête
-        $date = $request->query->get('date');
-
-        // Analyser la date pour obtenir le mois et l'année
-        $year = date('Y', strtotime($date));
-        $month = date('m', strtotime($date));
-
-        // Récupérer les absences pour le mois spécifié depuis le référentiel
-        $absences = $this->absenceRepository->findAbsencesForMonth($year, $month);
-
-        // Convertir les absences en format JSON et les renvoyer
-        return $this->json($absences);
-    }
-
-
 }
-

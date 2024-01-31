@@ -9,7 +9,6 @@
 		{% if app.request.query.has('redirect_to') %}
 			{% set targetPath = app.request.query.get('redirect_to') %}
 		{% endif %}
-
 		<script>
 			setTimeout(function () {
 window.location.href = '{{ targetPath }}';
@@ -26,11 +25,8 @@ window.location.href = '{{ targetPath }}';
 		<div class="calendrier-container">
 			<header class="calendrier-header">
 				<select id="mois-select"></select>
-
 				<select id="annee-select"></select>
-
 				<p class="date-actuelle-calendrier"></p>
-
 				<div class="calendrier-nav">
 					<span id="calendrier-prev">
 						<i class="fa-solid fa-chevron-left"></i>
@@ -54,9 +50,252 @@ window.location.href = '{{ targetPath }}';
 				<ul class="calendrier-dates"></ul>
 			</div>
 		</div>
-        <div id="info-container">
-        <h2 class="text-center text-light">Evenements</h2>
-        </div>
-    </div>
-	</section>
+		<div id="info-container" class="text-light">
+			<h2 class="text-center text-light">Evenements</h2>
+		</div>
+		<div>
+			{{form(form)}}
+		</div>
+	</div>
+</section>
+
+{# Rendre les données JSON des absences dans un bloc script #}
+<script>
+let date = new Date();
+let mois = date.getMonth();
+let annee = date.getFullYear();
+let infoContainer = document.getElementById("info-container"); // Renommer la variable
+let dernierJourClique = null;
+
+const jour = document.querySelector(".calendrier-dates");
+const prenexIcons = document.querySelectorAll(".calendrier-nav span");
+const joursCalendrier = document.querySelectorAll('.day'); 
+const jourJ = document.querySelector(".date-actuelle-calendrier");
+
+// Parsez les données JSON des absences
+const absencesData = {{ absencesData|raw }};
+
+
+
+// Tableau des noms des mois
+const lesMois = [
+"Janvier",
+"Février",
+"Mars",
+"Avril",
+"Mai",
+"Juin",
+"Juillet",
+"Aout",
+"Septembre",
+"Octobre",
+"Novembre",
+"Décembre"
+];
+
+// Fonction pour générer le calendrier
+const manipulation = () => { // Récupérer le premier jour du mois
+let jourUn = new Date(annee, mois, 1).getDay();
+jourUn = (jourUn === 0) ? 6 : jourUn - 1;
+// Récupérer la derniere date du mois
+let derniereDate = new Date(annee, mois + 1, 0).getDate();
+let dernierJour = new Date(annee, mois, derniereDate).getDay();
+let derniereDateDuMois = new Date(annee, mois, 0).getDate();
+let lit = "";
+
+// Boucles pour ajouter la dernière date du mois précédent
+for (let i = jourUn; i > 0; i--) {
+lit += `<li class="inactive">${
+derniereDateDuMois - i + 1
+}</li>`;
+}
+
+// Boucle pour ajouter les dates du mois actuel
+for (let i = 1; i <= derniereDate; i++) { // Vérifier si la date actuelle est correcte
+let ajd = i === date.getDate() && mois === new Date().getMonth() && annee === new Date().getFullYear() ? "active" : "";
+// Ajouter les jours au contenu HTML de l'élément jour
+lit += `<li class="day ${ajd}">${i}</li>`;
+}
+
+// Mettre à jour le HTML de l'élément jour avec les jours du mois actuel
+jour.innerHTML = lit;
+
+// Boucle pour ajouter les premieres dates des prochains mois
+for (let i = dernierJour; i > 6; i--) {
+lit += `<li class="inactive">i${
+i - dernierJour + 1
+} </li>`;
+}
+
+// Mettre à jour le texte de l'élément de la date actuelle
+// avec le format mois année
+jourJ.innerText = `${
+lesMois[mois]
+} ${annee}`;
+
+// Sélectionner tous les éléments de jour du calendrier
+const joursCalendrier = document.querySelectorAll('.day');
+
+// Ajouter un gestionnaire d'événements pour le survol
+joursCalendrier.forEach(jour => { jour.addEventListener('mouseenter', () => {
+if (jour !== dernierJourClique) {
+jour.style.backgroundColor = 'lightgray';}
+});
+});
+
+// Ajouter un gestionnaire d'événements pour la sortie du survol
+joursCalendrier.forEach(jour => {
+jour.addEventListener('mouseleave', () => {
+if (jour !== dernierJourClique) {
+jour.style.backgroundColor = '';
+}
+});
+});
+
+// Ajouter un gestionnaire d'événements pour le clic
+joursCalendrier.forEach(jour => {
+jour.addEventListener('click', () => { // Changer la couleur de fond au clic
+jour.style.backgroundColor = 'lightblue';
+
+// Mettre à jour le dernier jour cliqué
+if (dernierJourClique && dernierJourClique !== jour) {
+dernierJourClique.style.backgroundColor = ''; // Réinitialiser la couleur du dernier jour cliqué
+}dernierJourClique = jour;
+
+
+// Ajouter le texte d'information dans infoContainer
+const infoText = `Evénements pour le ${
+jour.textContent
+}-${
+mois + 1
+}-${annee}: Votre texte ici`;
+const infoParagraph = document.createElement("p");
+infoParagraph.textContent = infoText;
+infoParagraph.style.color = "white";
+infoContainer.appendChild(infoParagraph);
+});
+});
+
+// Ajouter un gestionnaire d'événements pour le clic sur un jour du calendrier
+joursCalendrier.forEach(jour => {
+jour.addEventListener('click', () => { // Récupérer la date cliquée au format jour-mois-année
+// Récupérer la date cliquée au format jour-mois-année
+const jourClique = parseInt(jour.innerText);
+const moisClique = mois + 1; // Ajouter 1 car les mois sont indexés à partir de 0
+const dateClique = new Date(annee,mois,jourClique)
+const formattedDateClique = `${annee}-${moisClique.toString().padStart(2, '0')}-${jourClique.toString().padStart(2, '0')}`;
+
+// Convertir la date cliquée en objet Date JavaScript
+const dateCliqueObj = new Date(dateClique);
+console.log(dateClique)
+
+const absencesDuJour = absencesData.filter(absence => {
+    const dateDebut = new Date(absence.dateDebutAt);
+    const dateFin = new Date(absence.dateFinAt);
+    const formattedDateDebut = dateDebut.toISOString().split("T")[0];
+    const formattedDateFin = dateFin.toISOString().split("T")[0];
+    console.log("Date de début:", formattedDateDebut);
+    console.log("Date de fin:", formattedDateFin);
+    console.log("Date cliquée:", formattedDateClique);
+    return formattedDateClique >= formattedDateDebut && formattedDateClique <= formattedDateFin;
+});
+
+// Afficher les absences du jour dans l'élément d'information
+afficherAbsencesDuJour(absencesDuJour);
+});
+});
+// Fonction pour afficher les absences du jour dans l'élément d'information
+function afficherAbsencesDuJour(absences) { // Effacer le contenu précédent de l'élément d'information
+infoContainer.innerHTML = '';
+
+if (absences.length === 0) { // Aucun événement trouvé, afficher un message
+console.log("Aucune absence trouvée pour ce jour.");
+infoContainer.innerHTML = '<p class="text-white">Aucun événement pour ce jour.</p>';
+} else { // Générer le contenu HTML pour les absences du jour
+console.log("Affichage des absences pour ce jour :");
+
+let htmlContent = '<ul>';
+absences.forEach(absence => { 
+// Affichez chaque absence individuellement dans la console
+console.log("Absence :", absence);
+
+htmlContent += `<li> Employé : ${
+absence.employe.nom
+}</li>`;
+htmlContent += `<li>Date de début : ${
+absence.dateDebutAt
+}</li>`;
+htmlContent += `<li>Date de fin : ${
+absence.dateFinAt
+}</li>`;
+htmlContent += `<li>Statut : ${
+absence.statut
+}</li>`;
+htmlContent += `<li>Motif : ${
+absence.motif
+}</li> <hr>`;
+// Ajoutez d'autres détails d'absence si nécessaire
+});
+htmlContent += '</ul>';
+infoContainer.innerHTML = htmlContent;
+}
+}
+};
+
+manipulation();
+
+// Ajouter un click event pour chaque icone
+prenexIcons.forEach(icon => {
+icon.addEventListener("click", () => {
+mois = icon.id === "calendrier-prev" ? mois - 1 : mois + 1;
+if (mois < 0) {
+mois = 11;
+annee--;
+} else if (mois > 11) {
+mois = 0;
+annee++;
+}
+
+manipulation();
+});
+});
+date = new Date(annee, mois, date.getDate());
+// Récupérer l'élément select pour le mois
+const moisSelect = document.getElementById("mois-select");
+
+for (let i = 0; i < lesMois.length; i++) {
+const option = document.createElement("option");
+option.value = i;
+option.textContent = lesMois[i];
+moisSelect.appendChild(option);
+}
+
+// Récupérer l'élément select pour l'année
+const anneeSelect = document.getElementById("annee-select");
+
+// Générer dynamiquement les options d'années (de deux années avant l'année actuelle jusqu'à deux années après)
+const anneeActuelle = new Date().getFullYear();
+const anneeDebut = anneeActuelle - 2;
+const anneeFin = anneeActuelle + 10;
+
+for (let annee = anneeDebut; annee <= anneeFin; annee++) {
+const option = document.createElement("option");
+option.value = annee;
+option.textContent = annee;
+anneeSelect.appendChild(option);
+}
+
+// Ajouter un gestionnaire d'événements pour le changement de sélection du mois
+moisSelect.addEventListener("change", () => {
+mois = parseInt(moisSelect.value);
+manipulation();
+});
+
+// Ajouter un gestionnaire d'événements pour le changement de sélection de l'année
+anneeSelect.addEventListener("change", () => {
+annee = parseInt(anneeSelect.value);
+manipulation();
+});
+
+</script>
 {% endblock %}
