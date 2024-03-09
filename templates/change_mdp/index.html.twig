@@ -1,11 +1,87 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ChangeMdpController!{% endblock %}
+{% block title %}Première connection{% endblock %}
 
 {% block body %}
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+
+<form method="post" class="container text-center p-0">
+
+		{# {% if error %}
+			<div class="alert alert-danger mt-5">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+		{% endif %} #}
+
+		<section class="vh-100 mt-5">
+			<div class="container py-5 h-75">
+				<div class="row d-flex justify-content-center align-items-center h-100">
+					<div class="col-12 col-md-8 col-lg-6 col-xl-5">
+						<div class="card cardLogin" style="border-radius: 1rem;">
+							<div class="card-body text-center">
+
+								<div class="mb-md-2 mt-md-2 ">
+									<img src="{{asset("images/ressourcesLogo.png")}}" id="logoCo" width="70%" class="mb-3">
+									<div class="mb-3">
+										{{ form_start(form) }}
+                                        {{ form_widget(form) }}
+                                        {{ form_end(form) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+	</form>
+    {# Afficher les erreurs du formulaire #}
+    {% if form_errors(form)|length > 0 %}
+        <div class="alert alert-{{label}}"> 
+        {{message}}
+        </div>
+            <ul>
+                {% for error in form_errors(form) %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		.cardLogin {
+			background-color: white;
+			backdrop-filter: blur(30px);
+		}
+
+		.card-body {
+			opacity: 0.8;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+			margin: 0;
+
+		}
+
+		body::after {
+			content: "";
+			background-image: url('../images/bg.jpg');
+			background-size: cover;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0.9;
+			z-index: -1;
+		}
+	</style>
 
 {# Afficher les erreurs du formulaire #}
 {% if form_errors(form)|length > 0 %}

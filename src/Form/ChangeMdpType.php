@@ -19,22 +19,36 @@ class ChangeMdpType extends AbstractType
                 "label" => "Ancien mot de passe",
                 "mapped" => false,
                 "data" => $options['ancienMDP'],
-            ])
+                "label_attr" => ["class" => "d-block mb-2"],
+                ],
+            )
             ->add("nouveauMDP", RepeatedType::class, [
                 "type" => PasswordType::class,
                 "invalid_message" => "Les champs du nouveau mot de passe doivent correspondre",
                 "first_options" => [
-                    "label" => "Nouveau mot de passe"
+                    "label" => "Nouveau mot de passe",
+                    "label_attr" => ["class" => "d-block mt-2"],
+                    "attr" => [
+                    "class"=> "my-3"
                 ],
+                ],
+                
                 "second_options" => [
-                    "label" => "Confirmez votre mot de passe"
+                    "label" => "Confirmez votre mot de passe",
+                    "label_attr" => ["class" => "d-block mb-2"],
+                    "attr" => [
+                        "class"=> "form"
+                    ]
                 ],
+
                 "mapped" => false, // Ne pas mapper ce champ à l'entité
             ])
             ->add("submit", SubmitType::class, [
                 "label" => "Envoyer",
-            ]);
-        
+                "attr" => [
+                    "class"=> "btn mt-3"
+            ]
+        ]);
         
     }
 

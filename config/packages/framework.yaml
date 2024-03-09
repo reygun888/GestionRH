@@ -1,5 +1,6 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
+
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
 
@@ -8,10 +9,15 @@ framework:
 
     #esi: true
     #fragments: true
+    error_controller: 'App\Controller\ErrorController::showError'
 
 when@test:
     framework:
         test: true
         session:
-            storage_factory_id: session.storage.factory.mock_file
-            cookie_lifetime: 2592000 # Durée de vie en secondes (30 jours)
+            cookie_lifetime: 0
+            cookie_secure: auto
+            cookie_samesite: lax
+            # storage_factory_id: session.storage.factory.mock_file
+            # cookie_lifetime: 2592000 # Durée de vie en secondes (30 jours)
+            

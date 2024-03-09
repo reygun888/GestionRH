@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="background-image">
+<div class="content">
+    <h1 class="erreur text-center">
+        The requested page couldn't be located. Checkout for any URL
+        misspelling or <a href="{{ path('connexion') }}">return to the login</a>.
+    </h1>
+</div>
+</section>
+<style>
+body {
+  background-image: url('{{ asset("img/erreur-404.jpg") }}');
+  background-size: cover; 
+  background-repeat: no-repeat; 
+}
+
+.content .erreur{
+  position: relative;
+  z-index: 1;
+  top: 750px;
+  color:white;
+  font-size:30px;
+}
+</style>
+{% endblock %}

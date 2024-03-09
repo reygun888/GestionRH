@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "mdb-ui-kit": "^7.1.0",
+    "pdfmake": "^0.2.9"
+  },
+  "devDependencies": {
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

@@ -4,11 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Employe;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -47,9 +48,24 @@ class EmployeCrudController extends AbstractCrudController
             TextField::new('nom'),
             TextField::new('prenom'),
             TextField::new("email"),
-            TextField::new("departement"),
-            TextField::new("poste"),
-            ArrayField::new("roles", "Rôles"),
+            ChoiceField::new("departement")->setChoices([
+                'Administration' => 'administration',
+                'Ressources Humaines' => 'ressources_humaines',
+                'Comptabilité et Finances' => 'comptabilité_finances',
+                'Education' => 'education',
+            ]),
+            ChoiceField::new("poste")->setChoices([
+                'RH' => 'rh',
+                'Formateur' => 'formateur',
+                'Coordinateur' => 'coordinateur',
+                'Comptabilité' => 'comptabilite',
+                'Manager' => 'manager',
+            ]),
+            ChoiceField::new("roles", "Rôles")->setChoices([
+                'Employé' =>'ROLE_USER',
+                'RH' =>'ROLE_ADMIN',
+                'Manager' =>'ROLE_MANAGER',
+            ])->allowMultipleChoices(),
             BooleanField::new("first_login", "Première connexion ?"),
         ];
 

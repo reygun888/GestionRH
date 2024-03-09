@@ -21,28 +21,34 @@ class CongeRepository extends ServiceEntityRepository
         parent::__construct($registry, Conge::class);
     }
 
-//    /**
-//     * @return Conge[] Returns an array of Conge objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findCongeForMonth(int $year, int $month): array
+{
+    // Créer les dates de début et de fin du mois spécifié
+    $startDate = new \DateTime("$year-$month-01 00:00:00");
+    $endDate = (clone $startDate)->modify('last day of this month')->setTime(23, 59, 59);
 
-//    public function findOneBySomeField($value): ?Conge
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    return $this->createQueryBuilder('b')
+        ->andWhere('b.dateDebutAt BETWEEN :startDate AND :endDate')
+        ->orWhere('b.dateFinAt BETWEEN :startDate AND :endDate')
+        ->setParameter('startDate', $startDate)
+        ->setParameter('endDate', $endDate)
+        ->getQuery()
+        ->getResult();
+}
+
+public function isDuplicateConge(Conge $conge): bool
+{
+    $qb = $this->createQueryBuilder('a')
+        ->andWhere('a.employe = :employe')
+        ->setParameter('employe', $conge->getEmploye())
+        ->andWhere(':dateDebut BETWEEN a.dateDebutAt AND a.dateFinAt')
+        ->andWhere(':dateFin BETWEEN a.dateDebutAt AND a.dateFinAt')
+        ->setParameter('dateDebut', $conge->getDateDebutAt())
+        ->setParameter('dateFin', $conge->getDateFinAt())
+        ->getQuery();
+
+    $result = $qb->getResult();
+
+    return count($result) > 0;
+}
 }

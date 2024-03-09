@@ -17,6 +17,9 @@ class Conge
     #[ORM\Column(length: 255)]
     private ?string $type_conge = null;
 
+    #[ORM\Column(length: 255, nullable:true)]
+    private ?string $statut = null;
+
     #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'conges')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Employe $employe = null;
@@ -76,6 +79,18 @@ class Conge
     public function setDateFinAt(\DateTimeInterface $dateFinAt): static
     {
         $this->dateFinAt = $dateFinAt;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

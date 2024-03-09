@@ -4,23 +4,45 @@
   box-sizing: border-box;
 }
 
+.pageUne{
+  background-color: lightgrey
+}
 
 .calendrier-container{
   background-color: #fff;
-  width: 60%;
+  width: 100%;
   border-radius: 10px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  margin: 30px 10px 30px 20px;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .calendrier-container header{
   display: flex;
   align-items: center;
-  padding: 25px 30px 10px;
+  padding: 10px;
   justify-content: space-between;
 }
 
 header .calendrier-nav{
   display: flex;
+}
+
+#nombre-absences{
+  color: red;
+}
+
+#nombre-conges{
+  color: blue;
+}
+
+#nombre-heuresSup{
+  color:rgb(55, 79, 55);
+}
+
+#filterButton{
+  border: none;
+  background-color: transparent;
 }
 
 header .calendrier-nav span{
@@ -36,10 +58,6 @@ header .calendrier-nav span{
   font-size: 1.9rem;
 }
 
-.calendrier-nav span:last-child {
-  margin-right: -10px;
-}
-
 header .calendrier-nav span:hover{
   background: #f2f2f2;
 }
@@ -47,11 +65,37 @@ header .calendrier-nav span:hover{
 header .date-actuelle-calendrier {
   font-weight: 500;
   font-size: 1.45rem;
+  margin: 0%;
 }
 
 .calendrier-body {
-  padding: 20px;
+  padding: 10px;
+  padding-bottom: 0px;
+  display: flex;
 }
+
+.numero-semaine-list {
+  margin-right: 10px; 
+  margin-top: 60px;
+  padding: 0px;
+  flex-direction: column; 
+}
+.calendrier-dates-container {
+    flex: 1;
+    align-items: flex-end; 
+}
+
+.numero-semaine{
+  margin-bottom: 70px;
+  color: black !important;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+.numero-semaine:hover {
+  font-size: xx-large;
+  width: 30px;
+} 
 
 .calendrier-body ul {
   list-style: none;
@@ -60,12 +104,16 @@ header .date-actuelle-calendrier {
   text-align: center;
 }
 
-.calendrier-body .calendrier-dates {
-  margin-bottom: 20px;
+.calendrier-jours,
+.calendrier-dates{
+  padding: 0;
+  margin: 0;
 }
+
 
 .calendrier-dates li{
   border: 1px solid;
+  border-color: rgba(128, 128, 128, 0.301);
   height: 100px;
   display: flex;
   justify-content: end;
@@ -77,12 +125,25 @@ header .date-actuelle-calendrier {
 .calendrier-body li {
   width: calc(100% / 7);
   font-size: 1.07rem;
-  color: #414141;
+  color: #2a80b5;
 }
 
 .calendrier-body .calendrier-jours li {
   cursor: default;
   font-weight: 500;
+}
+
+li.day{
+  font-size: medium;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Pour centrer horizontalement */
+  padding: 30px;
+}
+
+li.days{
+  font-size: xx-large;
+  color: black;
 }
 
 .calendrier-dates li.inactive {
@@ -93,19 +154,174 @@ header .date-actuelle-calendrier {
   color: #fff;
 }
 
-
 li.day.active {
-  background: red;
-  color: yellow;
+  background: #2a80b5;
+  font-size: xx-large;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .calendrier-dates li:not(.active):hover::before {
   background: #e4e1e1;
 }
 
+#mois-select,
+#annee-select,
+#mois-en-cours-btn{
+  border: none;
+  border-radius: 5px;
+}
+
+/* Notifs */
+.with-absences {
+  position: relative;
+}
+
+.with-absences .absence-bar {
+  height: 5px;
+  background-color: red;
+  position: absolute;
+  bottom: 0;
+  width: 80%;
+}
+
+.with-conges {
+  position: relative;
+}
+
+.with-conges .conge-bar {
+  height: 5px;
+  background-color: blue;
+  position: absolute;
+  bottom: 10%;
+  width: 80%;
+}
+
+.with-heuresSup {
+  position: relative;
+}
+
+.with-heuresSup .heuresSup-bar {
+  position: absolute;
+  right: 80%;
+  bottom: 80%;
+  width: 8%;
+  height: 10%;
+  background-color: rgb(55, 79, 55);
+  border-radius: 50%;
+}
 /* Info Container */
 
-#info-container{
-  background-color: #414141;
-  width: 40%;
+.list{
+  background-color: lightgrey;
+  width: 50%;
 }
+
+#info-container ul{
+  padding: 0%;
+  margin: 20px;
+}
+
+#info-container{
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.plus{
+  font-size: 20px;
+  background-color: lightgrey;
+  color: #2a80b5;
+  border: 1px solid #2a80b5;
+  border-radius: 50%;
+  padding: 5px 10px 5px 10px ;
+  position:fixed;
+  bottom:5%;
+  right:2%;
+  z-index:9999;
+}
+
+#convertToPDFBtn{
+  border:none;
+  border-radius: 5px;
+  position:fixed;
+  bottom:7%;
+  right:5%;
+  z-index:9999;
+}
+
+#compteur-absences{
+  color: red;
+}
+#compteur-conges{
+  color: blue;
+}
+
+#compteur-heuresSup{
+  color:rgb(55, 79, 55);
+}
+
+.absence { 
+  color:red;
+  display: flex;
+  justify-content: center;font-weight: bold;
+  border-bottom: 1px  solid red;
+
+}
+
+.conge{ 
+  color:blue;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  border-bottom: 1px  solid blue;
+} 
+
+.heuresSup{
+  color:rgb(55, 79, 55);
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  border-bottom: 1px  solid rgb(55, 79, 55);
+}
+
+#info-container td{ 
+  padding: 0px;
+  background-color: lightgrey;
+  color: black;
+}
+
+#info-container th{ 
+  padding: 0px;
+  background-color: lightgrey;
+  color: black;
+  font-weight: bold;
+}
+
+#infoContain button{
+  position:fixed;
+  border-radius: 10px;
+  padding: 10px;
+  bottom: 15%;
+  right:2%;
+  z-index:9999;
+}
+
+#afficherEvenementsMois{
+  border-radius: 10px;
+  /* margin-left: 25%; */
+}
+/* Formulaire */
+
+.motif{
+  width: 80% !important;
+  margin: auto !important;
+}
+
+.week-highlight{
+  background-color: yellow;
+}
+
+
+
+
+

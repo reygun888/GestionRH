@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
-
 class AbsenceCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

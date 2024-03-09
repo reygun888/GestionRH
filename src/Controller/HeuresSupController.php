@@ -36,7 +36,7 @@ class HeuresSupController extends AbstractController
     
         // Associer l'employé connecté à l'HeuresSup
         $heuresSup->setEmploye($user);
-    
+
         // Création du formulaire
         $form = $this->createForm(HeuresSupType::class, $heuresSup);
     
@@ -45,6 +45,7 @@ class HeuresSupController extends AbstractController
     
         // Vérifier si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
+        
             // Enregistrement en base de données
             $this->entityManager->persist($heuresSup);
             $this->entityManager->flush();

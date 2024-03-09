@@ -17,14 +17,14 @@ class HeuresSup
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column]
-    private ?int $nombre_heures = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $approuve_par = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nombre_heures = null;
 
     #[ORM\ManyToOne(inversedBy: 'heuresSups')]
     private ?Employe $employe = null;
+
+    #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $heureDepart = null;
 
     public function getId(): ?int
     {
@@ -43,26 +43,14 @@ class HeuresSup
         return $this;
     }
 
-    public function getNombreHeures(): ?int
+    public function getNombreHeures(): ?string
     {
         return $this->nombre_heures;
     }
 
-    public function setNombreHeures(int $nombre_heures): static
+    public function setNombreHeures(?string $nombre_heures): self
     {
         $this->nombre_heures = $nombre_heures;
-
-        return $this;
-    }
-
-    public function getApprouvePar(): ?string
-    {
-        return $this->approuve_par;
-    }
-
-    public function setApprouvePar(string $approuve_par): static
-    {
-        $this->approuve_par = $approuve_par;
 
         return $this;
     }
@@ -75,6 +63,18 @@ class HeuresSup
     public function setEmploye(?Employe $employe): static
     {
         $this->employe = $employe;
+
+        return $this;
+    }
+
+    public function getHeureDepart(): ?\DateTimeImmutable
+    {
+        return $this->heureDepart;
+    }
+
+    public function setHeureDepart(?\DateTimeImmutable $heureDepart): static
+    {
+        $this->heureDepart = $heureDepart;
 
         return $this;
     }

@@ -13,17 +13,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
-
 class DashboardController extends AbstractDashboardController
 {
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        return $this->redirect($adminUrlGenerator->setController(EmployeCrudController::class)->generateUrl());
-
-        
+        return $this->redirect($adminUrlGenerator->setController(EmployeCrudController::class)->generateUrl());  
     }
 
     public function configureDashboard(): Dashboard
@@ -34,9 +30,11 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud("Absence", "fa fa-user-xmark", Absence::class);
-        yield MenuItem::linkToCrud("Conge", "fa fa-person-through-window", Conge::class);
+        yield MenuItem::linkToRoute('Retour au site', 'fas fa-home', 'accueil');
+        yield MenuItem::section('Gestion des employés');
         yield MenuItem::linkToCrud("Employe", "fa fa-user",Employe::class);
+        yield MenuItem::linkToCrud("Absence", "fa fa-user-slash", Absence::class);
+        yield MenuItem::linkToCrud("Conge", "fa fa-person-walking-luggage", Conge::class);
         yield MenuItem::linkToCrud("HeuresSup","fa fa-clock",HeuresSup::class);
 
     }

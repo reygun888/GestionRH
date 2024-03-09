@@ -35,4 +35,21 @@ class AbsenceRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
 }
+
+public function isDuplicateAbsence(Absence $absence): bool
+{
+    $qb = $this->createQueryBuilder('a')
+        ->andWhere('a.employe = :employe')
+        ->setParameter('employe', $absence->getEmploye())
+        ->andWhere(':dateDebut BETWEEN a.dateDebutAt AND a.dateFinAt')
+        ->andWhere(':dateFin BETWEEN a.dateDebutAt AND a.dateFinAt')
+        ->setParameter('dateDebut', $absence->getDateDebutAt())
+        ->setParameter('dateFin', $absence->getDateFinAt())
+        ->getQuery();
+
+    $result = $qb->getResult();
+
+    return count($result) > 0;
+}
+
 }

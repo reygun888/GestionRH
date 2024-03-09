@@ -24,6 +24,11 @@ class AbsenceController extends AbstractController
     {
         // Récupérer l'utilisateur connecté
         $user = $this->getUser();
+
+        //-----------------------
+        // Récupérer le rôle de l'utilisateur
+        $userRole = $user->getRoles()[0]; // Supposant que vous récupérez le premier rôle
+        //---------------------------
     
         // Assurez-vous qu'un utilisateur est connecté
         if (!$user) {
@@ -56,6 +61,7 @@ class AbsenceController extends AbstractController
         // Affichage du formulaire dans le template
         return $this->render('absence/index.html.twig', [
             'form' => $form->createView(),
+            'userRole' => $userRole,
         ]);
     }
 }

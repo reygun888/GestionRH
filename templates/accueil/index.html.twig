@@ -1,301 +1,287 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Accueil
+
 {% endblock %}
 
 {% block body %}
-	{% if not app.user %}
-		{% set targetPath = path('connexion') %}
-		{% if app.request.query.has('redirect_to') %}
-			{% set targetPath = app.request.query.get('redirect_to') %}
-		{% endif %}
-		<script>
-			setTimeout(function () {
-window.location.href = '{{ targetPath }}';
-}, 0);
-		</script>
-	{% endif %}
-	{% if is_granted("ROLE_ADMIN") %}
-		<a href="{{ path('admin') }}">Admin</a>
-	{% endif %}
-	<a href="{{ path('app_logout') }}">Deconnexion</a>
-
-	{# Calendrier #}
+<div class="pageUne">
 	<div class="global-container d-flex">
 		<div class="calendrier-container">
 			<header class="calendrier-header">
-				<select id="mois-select"></select>
-				<select id="annee-select"></select>
-				<p class="date-actuelle-calendrier"></p>
-				<div class="calendrier-nav">
+			<img src="{{asset("images/ressourcesLogo.png")}}" id="logoCo" width="20%" class="" alt="">
+			<section>
+			<div class="mt-3 text-center">
+				<h4>Bonjour, {{ app.user.getPrenom() }} 
+				<a href="{{ path('app_logout') }}">
+				<i class="fa-solid fa-door-open"></i></a></h4>
+			</div>
+			<div class="filtre mt-3">
+				<label>
+					<input type="checkbox" id="show-absences" checked>
+					Absences
+				</label>
+				<label class="mx-2">
+					<input type="checkbox" id="show-conges" checked>
+					Congés
+				</label>
+				<label>
+					<input type="checkbox" id="show-heures-sup" checked>
+					Heures supp.
+				</label>
+			</div>
+			</section >
+			<section class='mt-3'>
+				<div class="calendrier-nav ">
 					<span id="calendrier-prev">
 						<i class="fa-solid fa-chevron-left"></i>
 					</span>
+					<p class="date-actuelle-calendrier"></p>
 					<span id="calendrier-next">
 						<i class="fa-solid fa-chevron-right"></i>
 					</span>
 				</div>
+			</section>
 			</header>
-
 			<div class="calendrier-body">
-				<ul class="calendrier-jours">
-					<li>Lun</li>
-					<li>Mar</li>
-					<li>Mer</li>
-					<li>Jeu</li>
-					<li>Ven</li>
-					<li>Sam</li>
-					<li>Dim</li>
-				</ul>
-				<ul class="calendrier-dates"></ul>
+				<div class="numero-semaine-container">
+					<ul class="numero-semaine-list"></ul>
+				</div>
+				<div class="calendrier-dates-container">
+					<ul class="calendrier-jours">
+						<li>Lun</li>
+						<li>Mar</li>
+						<li>Mer</li>
+						<li>Jeu</li>
+						<li>Ven</li>
+						<li>Sam</li>
+						<li>Dim</li>
+					</ul>
+					<ul class="calendrier-dates"></ul>
+				</div>
+			</div>
+			<div class="text-center">
+				<p class="text-center m-0">Récapitulatif général mensuel : Nbr. de jours d'Absences = <span id="nombre-absences"></span> / Nbr. de jours de Congés = <span id="nombre-conges"></span></p>
+				<p class="text-center m-0">Cumul mensuel des heures supp. : <span id="nombre-heuresSup"></span></p>
+			</div> 
+			<div class="search d-flex flex-row p-3">
+				<select id="mois-select" class=""></select>
+				<select id="annee-select" class="mx-1"></select>
+				<button id="mois-en-cours-btn" class="p-1">Retour</button>
+
+				{% if is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+				<div class="mt-1 ms-5">
+				<button id="filterButton"><i class="fa-solid fa-magnifying-glass"></i></button>
+				<input class="" type="text" id="employeeName" placeholder="Entrez le nom">
+				</div>
+				{% else %}
+				<div class="mt-1 ms-5">
+					<input class="" type="text" id="employeeName" hidden placeholder="Entrez le nom" disabled>
+				</div>
+				{% endif %}
+
+				{% if is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+				<div class"">
+				<p class="mt-2 mb-0 ms-3"><i class="fa fa-user-large-slash"></i> : <span id="compteur-absences"></span> <i class="fa fa-umbrella-beach"></i> : <span id="compteur-conges"></span> <i class="fa-solid fa-user-clock"></i> : <span id="compteur-heuresSup"></span></p>
+				</div>
+				{% endif %}
+				{% if is_granted("ROLE_ADMIN") %}
+				<div class="ms-auto mt-2">
+				<a href="{{ path('admin') }}">Gestionnaire du personel <i class="fa-solid fa-chalkboard-user"></i></a>
+				</div>
+				{% endif %}
 			</div>
 		</div>
-		<div id="info-container" class="text-light">
-			<h2 class="text-center text-light">Evenements</h2>
-		</div>
-		<div>
-			{{form(form)}}
-		</div>
+		<section class="list">
+			<div class="text-light">
+				{% if not app.user %}
+				{% set targetPath = path('connexion') %}
+				{% if app.request.query.has('redirect_to') %}
+					{% set targetPath = app.request.query.get('redirect_to') %}
+				{% endif %}
+				<script>
+					setTimeout(function () {
+						window.location.href = '{{ targetPath }}';
+					}, 0);
+				</script>
+				{% endif %}
+					<div id="info-container" class="detail m-2 mt-5 scrollable"></div>
+			</div>
+			{# Affichage des messages flash d'erreur de doublons #}
+			<div id="flashMessagesModal" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-body text-center">
+							<div class="row px-3" id="flashMessagesContainer">
+								<!-- Les messages flash seront ajoutés ici -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Default dropup button -->
+			<div class="dropup me-2">
+				<div class="d-flex justify-content-center">
+					<button id="afficherEvenementsMois" type="button" class="d-flex justify-content-center p-1">Afficher les événements du mois</button>
+				</div>
+				<a type="button" class="plus mb-3" data-bs-toggle="dropdown" aria-expanded="false">
+				<i class="fa-solid fa-plus"></i>
+				</a>
+				<button id="convertToPDFBtn" class="mx-4 p-1 px-2"><i class="fa-regular fa-file-pdf"></i></button>
+					<div class="dropdown-menu mb-5 p-3">
+					<!-- Button trigger modal -->
+						<a class="btn btn-secondary p-2" data-bs-toggle="modal" data-bs-target="#absModal">Demande d'absence</a><br>
+						<a class="btn btn-secondary p-2 mt-3" data-bs-toggle="modal" data-bs-target="#congeModal">Demande de congé</a><br>
+						<a class="btn btn-secondary p-2 mt-3" data-bs-toggle="modal" data-bs-target="#heuresSupModal">Heures Supp.</a>
+					</div>
+					<!-- Modal pour le formulaire d'absences -->
+					<div class="modal fade" id="absModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h1 class="modal-title fs-5" id="exampleModalLabel">Demande d'absence</h1>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+									{{ form_start(formAbsence) }}
+										<div class="row text-center">
+										<div class="col-md-6">
+											{{ form_row(formAbsence.dateDebutAt) }}
+										</div>
+										<div class="col-md-6">
+											{{ form_row(formAbsence.dateFinAt) }}
+										</div>
+										</div>
+										<div class="">
+											{{ form_row(formAbsence.motif) }}
+										</div>
+									{{ form_end(formAbsence) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Modal pour le formulaire des Congés -->
+					<div class="modal fade" id="congeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h1 class="modal-title fs-5" id="exampleModalLabel">Demande de congé</h1>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+										{{ form_start(formConge) }}
+										<div class="row">
+										<div class="col-md-6">
+											{{ form_row(formConge.dateDebutAt) }}
+										</div>
+										<div class="col-md-6">
+											{{ form_row(formConge.dateFinAt) }}
+										</div>
+										</div>
+										<div class="col-md-8">
+											{{ form_row(formConge.type_Conge) }}
+										</div>
+										{{ form_end(formConge) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Modal pour déclaration des Heures Supp -->
+					<div class="modal fade" id="heuresSupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h1 class="modal-title fs-5" id="exampleModalLabel">Heures Supp.</h1>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+									{{ form_start(formHeuresSup) }}
+										<div class="row">
+											<div class="col-md-6">
+												{{ form_row(formHeuresSup.date) }}
+											</div>
+											<div class="col-md-6">
+												{{ form_row(formHeuresSup.heure_depart) }}
+											</div>
+										</div>
+									{{ form_end(formHeuresSup) }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+			</div>
+		</section>
 	</div>
-</section>
+</div>
 
-{# Rendre les données JSON des absences dans un bloc script #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-let date = new Date();
-let mois = date.getMonth();
-let annee = date.getFullYear();
-let infoContainer = document.getElementById("info-container"); // Renommer la variable
-let dernierJourClique = null;
+document.addEventListener("DOMContentLoaded", function() {
+	if (window.jspdf && typeof window.jspdf.jsPDF === 'function' && window.html2canvas) {
+		const jsPDF = window.jspdf.jsPDF;
 
-const jour = document.querySelector(".calendrier-dates");
-const prenexIcons = document.querySelectorAll(".calendrier-nav span");
-const joursCalendrier = document.querySelectorAll('.day'); 
-const jourJ = document.querySelector(".date-actuelle-calendrier");
+		function createPdf() {
+			const element = document.getElementById("info-container"); // L'élément contenant les informations à convertir
+			html2canvas(element).then(canvas => {
+				const imgData = canvas.toDataURL('image/png');
+				const pdf = new jsPDF({
+					orientation: 'p',
+					unit: 'mm',
+					format: 'a4'
+				});
+				const imgProps= pdf.getImageProperties(imgData);
+				const pdfWidth = pdf.internal.pageSize.getWidth();
+				const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+				const margin = 10;
+				pdf.addImage(imgData, 'PNG', margin, margin, pdfWidth - (2 * margin), pdfHeight - (2 * margin));
+				pdf.save('recap.pdf');
+			});
+		}
 
-// Parsez les données JSON des absences
-const absencesData = {{ absencesData|raw }};
-
-
-
-// Tableau des noms des mois
-const lesMois = [
-"Janvier",
-"Février",
-"Mars",
-"Avril",
-"Mai",
-"Juin",
-"Juillet",
-"Aout",
-"Septembre",
-"Octobre",
-"Novembre",
-"Décembre"
-];
-
-// Fonction pour générer le calendrier
-const manipulation = () => { // Récupérer le premier jour du mois
-let jourUn = new Date(annee, mois, 1).getDay();
-jourUn = (jourUn === 0) ? 6 : jourUn - 1;
-// Récupérer la derniere date du mois
-let derniereDate = new Date(annee, mois + 1, 0).getDate();
-let dernierJour = new Date(annee, mois, derniereDate).getDay();
-let derniereDateDuMois = new Date(annee, mois, 0).getDate();
-let lit = "";
-
-// Boucles pour ajouter la dernière date du mois précédent
-for (let i = jourUn; i > 0; i--) {
-lit += `<li class="inactive">${
-derniereDateDuMois - i + 1
-}</li>`;
-}
-
-// Boucle pour ajouter les dates du mois actuel
-for (let i = 1; i <= derniereDate; i++) { // Vérifier si la date actuelle est correcte
-let ajd = i === date.getDate() && mois === new Date().getMonth() && annee === new Date().getFullYear() ? "active" : "";
-// Ajouter les jours au contenu HTML de l'élément jour
-lit += `<li class="day ${ajd}">${i}</li>`;
-}
-
-// Mettre à jour le HTML de l'élément jour avec les jours du mois actuel
-jour.innerHTML = lit;
-
-// Boucle pour ajouter les premieres dates des prochains mois
-for (let i = dernierJour; i > 6; i--) {
-lit += `<li class="inactive">i${
-i - dernierJour + 1
-} </li>`;
-}
-
-// Mettre à jour le texte de l'élément de la date actuelle
-// avec le format mois année
-jourJ.innerText = `${
-lesMois[mois]
-} ${annee}`;
-
-// Sélectionner tous les éléments de jour du calendrier
-const joursCalendrier = document.querySelectorAll('.day');
-
-// Ajouter un gestionnaire d'événements pour le survol
-joursCalendrier.forEach(jour => { jour.addEventListener('mouseenter', () => {
-if (jour !== dernierJourClique) {
-jour.style.backgroundColor = 'lightgray';}
+		document.getElementById("convertToPDFBtn").addEventListener("click", function() {
+			createPdf();
+		});
+	} else {
+		console.error("La bibliothèque jsPDF n'a pas été correctement chargée.");
+	}
 });
-});
-
-// Ajouter un gestionnaire d'événements pour la sortie du survol
-joursCalendrier.forEach(jour => {
-jour.addEventListener('mouseleave', () => {
-if (jour !== dernierJourClique) {
-jour.style.backgroundColor = '';
-}
-});
-});
-
-// Ajouter un gestionnaire d'événements pour le clic
-joursCalendrier.forEach(jour => {
-jour.addEventListener('click', () => { // Changer la couleur de fond au clic
-jour.style.backgroundColor = 'lightblue';
-
-// Mettre à jour le dernier jour cliqué
-if (dernierJourClique && dernierJourClique !== jour) {
-dernierJourClique.style.backgroundColor = ''; // Réinitialiser la couleur du dernier jour cliqué
-}dernierJourClique = jour;
-
-
-// Ajouter le texte d'information dans infoContainer
-const infoText = `Evénements pour le ${
-jour.textContent
-}-${
-mois + 1
-}-${annee}: Votre texte ici`;
-const infoParagraph = document.createElement("p");
-infoParagraph.textContent = infoText;
-infoParagraph.style.color = "white";
-infoContainer.appendChild(infoParagraph);
-});
-});
-
-// Ajouter un gestionnaire d'événements pour le clic sur un jour du calendrier
-joursCalendrier.forEach(jour => {
-jour.addEventListener('click', () => { // Récupérer la date cliquée au format jour-mois-année
-// Récupérer la date cliquée au format jour-mois-année
-const jourClique = parseInt(jour.innerText);
-const moisClique = mois + 1; // Ajouter 1 car les mois sont indexés à partir de 0
-const dateClique = new Date(annee,mois,jourClique)
-const formattedDateClique = `${annee}-${moisClique.toString().padStart(2, '0')}-${jourClique.toString().padStart(2, '0')}`;
-
-// Convertir la date cliquée en objet Date JavaScript
-const dateCliqueObj = new Date(dateClique);
-console.log(dateClique)
-
-const absencesDuJour = absencesData.filter(absence => {
-    const dateDebut = new Date(absence.dateDebutAt);
-    const dateFin = new Date(absence.dateFinAt);
-    const formattedDateDebut = dateDebut.toISOString().split("T")[0];
-    const formattedDateFin = dateFin.toISOString().split("T")[0];
-    console.log("Date de début:", formattedDateDebut);
-    console.log("Date de fin:", formattedDateFin);
-    console.log("Date cliquée:", formattedDateClique);
-    return formattedDateClique >= formattedDateDebut && formattedDateClique <= formattedDateFin;
-});
-
-// Afficher les absences du jour dans l'élément d'information
-afficherAbsencesDuJour(absencesDuJour);
-});
-});
-// Fonction pour afficher les absences du jour dans l'élément d'information
-function afficherAbsencesDuJour(absences) { // Effacer le contenu précédent de l'élément d'information
-infoContainer.innerHTML = '';
-
-if (absences.length === 0) { // Aucun événement trouvé, afficher un message
-console.log("Aucune absence trouvée pour ce jour.");
-infoContainer.innerHTML = '<p class="text-white">Aucun événement pour ce jour.</p>';
-} else { // Générer le contenu HTML pour les absences du jour
-console.log("Affichage des absences pour ce jour :");
-
-let htmlContent = '<ul>';
-absences.forEach(absence => { 
-// Affichez chaque absence individuellement dans la console
-console.log("Absence :", absence);
-
-htmlContent += `<li> Employé : ${
-absence.employe.nom
-}</li>`;
-htmlContent += `<li>Date de début : ${
-absence.dateDebutAt
-}</li>`;
-htmlContent += `<li>Date de fin : ${
-absence.dateFinAt
-}</li>`;
-htmlContent += `<li>Statut : ${
-absence.statut
-}</li>`;
-htmlContent += `<li>Motif : ${
-absence.motif
-}</li> <hr>`;
-// Ajoutez d'autres détails d'absence si nécessaire
-});
-htmlContent += '</ul>';
-infoContainer.innerHTML = htmlContent;
-}
-}
-};
-
-manipulation();
-
-// Ajouter un click event pour chaque icone
-prenexIcons.forEach(icon => {
-icon.addEventListener("click", () => {
-mois = icon.id === "calendrier-prev" ? mois - 1 : mois + 1;
-if (mois < 0) {
-mois = 11;
-annee--;
-} else if (mois > 11) {
-mois = 0;
-annee++;
-}
-
-manipulation();
-});
-});
-date = new Date(annee, mois, date.getDate());
-// Récupérer l'élément select pour le mois
-const moisSelect = document.getElementById("mois-select");
-
-for (let i = 0; i < lesMois.length; i++) {
-const option = document.createElement("option");
-option.value = i;
-option.textContent = lesMois[i];
-moisSelect.appendChild(option);
-}
-
-// Récupérer l'élément select pour l'année
-const anneeSelect = document.getElementById("annee-select");
-
-// Générer dynamiquement les options d'années (de deux années avant l'année actuelle jusqu'à deux années après)
-const anneeActuelle = new Date().getFullYear();
-const anneeDebut = anneeActuelle - 2;
-const anneeFin = anneeActuelle + 10;
-
-for (let annee = anneeDebut; annee <= anneeFin; annee++) {
-const option = document.createElement("option");
-option.value = annee;
-option.textContent = annee;
-anneeSelect.appendChild(option);
-}
-
-// Ajouter un gestionnaire d'événements pour le changement de sélection du mois
-moisSelect.addEventListener("change", () => {
-mois = parseInt(moisSelect.value);
-manipulation();
-});
-
-// Ajouter un gestionnaire d'événements pour le changement de sélection de l'année
-anneeSelect.addEventListener("change", () => {
-annee = parseInt(anneeSelect.value);
-manipulation();
-});
-
 </script>
+
+<script>
+$(document).ready(function() {
+    // Fonction pour afficher les messages flash pour les doublons dans le modal
+    function showFlashMessages() {
+        var flashMessagesContainer = $('#flashMessagesContainer');
+        {% for flashError in app.flashes('error') %}
+            flashMessagesContainer.append('<div class="alert alert-danger m-0">{{ flashError }}</div>');
+        {% endfor %}
+        {% for flashSuccess in app.flashes('succes') %}
+            flashMessagesContainer.append('<div class="alert alert-success m-0">{{ flashSuccess }}</div>');
+        {% endfor %}
+    }
+	
+    // Afficher les messages flash dans le modal lorsque la page se charge
+    showFlashMessages();
+	// Vérifier s'il y a des messages flash avant d'afficher le modal
+    if ($('#flashMessagesContainer').children().length > 0) {
+        // Afficher le modal s'il y a des messages flash
+        $('#flashMessagesModal').modal('show');
+    }
+});
+</script>
+
+<script>
+const absencesData = {{ absencesData|raw }};
+const congeData = {{ congeData|raw }};
+const heuresSupData = {{ heuresSupData|raw }};
+</script>
+
 {% endblock %}

@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 
 class HeuresSupCrudController extends AbstractCrudController
 {
@@ -20,15 +21,14 @@ class HeuresSupCrudController extends AbstractCrudController
     {
         return [
             DateField::new("date","Date"),
-            IntegerField::new("nombre_heures", "Nombre d'heures"),
-            TextField::new("approuve_par", "Approuvé par"),
+            TextField::new("nombre_heures", "Nombre d'heures"),
+            TimeField::new("heure_depart", "Heure de depart"),
             AssociationField::new("employe","Employé")
             ->setLabel("Employé")
-                ->setRequired(true)
-                ->formatValue(function ($value) {
-                    return $value ? strtoupper($value->getNom()) . ' ' . $value->getPrenom() : "Employé inconnu";
-                })
-
+            ->setRequired(true)
+            ->formatValue(function ($value) {
+                return $value ? $value->getNom() . ' ' . $value->getPrenom() : "Employé inconnu";
+            })
         ];
     }
 
