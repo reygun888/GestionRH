@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				const imgProps= pdf.getImageProperties(imgData);
 				const pdfWidth = pdf.internal.pageSize.getWidth();
 				const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-				const margin = 10;
+				const margin = 20;
 				pdf.addImage(imgData, 'PNG', margin, margin, pdfWidth - (2 * margin), pdfHeight - (2 * margin));
 				pdf.save('recap.pdf');
 			});

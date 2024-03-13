@@ -20,9 +20,8 @@ class Absence
     #[ORM\Column]
     private ?\DateTimeImmutable $dateFinAt = null;
 
-    #[ORM\Column(length: 255, nullable:true)]
-    private ?string $statut = null;
-
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $statut = null;
 
     #[ORM\ManyToOne(inversedBy: 'absences')]
     private ?Employe $employe = null;
@@ -59,12 +58,12 @@ class Absence
         return $this;
     }
 
-    public function getStatut(): ?string
+    public function getStatut(): ?bool
     {
         return $this->statut;
     }
 
-    public function setStatut(string $statut): static
+    public function setStatut(bool $statut): static
     {
         $this->statut = $statut;
 

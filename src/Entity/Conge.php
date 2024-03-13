@@ -17,8 +17,8 @@ class Conge
     #[ORM\Column(length: 255)]
     private ?string $type_conge = null;
 
-    #[ORM\Column(length: 255, nullable:true)]
-    private ?string $statut = null;
+    #[ORM\Column(type: Types::BOOLEAN, nullable:true)]
+    private ?bool $statut = null;
 
     #[ORM\ManyToOne(targetEntity: Employe::class, inversedBy: 'conges')]
     #[ORM\JoinColumn(nullable: false)]
@@ -83,12 +83,12 @@ class Conge
         return $this;
     }
 
-    public function getStatut(): ?string
+    public function getStatut(): ?bool
     {
         return $this->statut;
     }
 
-    public function setStatut(string $statut): static
+    public function setStatut(bool $statut): static
     {
         $this->statut = $statut;
 
