@@ -13,8 +13,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
-
+            
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800

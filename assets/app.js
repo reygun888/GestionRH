@@ -1,7 +1,7 @@
 let date = new Date();
 let mois = date.getMonth();
 let annee = date.getFullYear();
-let infoContainer = document.getElementById("info-container"); // Renommer la variable
+let infoContainer = document.getElementById("info-container");
 let dernierJourClique = null;
 let nombreAbsences = 0;
 let nombreConges = 0;
@@ -436,11 +436,12 @@ if (absences.length === 0 && conges.length === 0 && heuresSup.length === 0) {
         htmlContentAbsences += `<td>${absence.employe.nom}</td>`;
         htmlContentAbsences += `<td>${formattedDateDebut}</td>`;
         htmlContentAbsences += `<td>${formattedDateFin}</td>`;
-        if (absence.statut === '1') {
-        htmlContentAbsences += `<td><span class="badge bg-success">Justifié</span></td>`;
-        } else {
-        htmlContentAbsences += `<td><span class="badge bg-danger">Non justifié</span></td>`;
-        }
+        htmlContentAbsences += `<td><span class="badge bg-${absence.statut ? 'success' : 'danger'}">${absence.statut ? 'Justifié' : 'Non justifié'}</span></td>`;
+        // if (absence.statut === '0') {
+        // htmlContentAbsences += `<td><span class="badge bg-success">Justifié</span></td>`;
+        // } else {
+        // htmlContentAbsences += `<td><span class="badge bg-danger">Non justifié</span></td>`;
+        // }
         htmlContentAbsences += `<td>${absence.motif}</td>`;
         htmlContentAbsences += '</tr>';
         nombreAbsencesTotal++; // Incrémenter le nombre total d'absences
@@ -464,11 +465,7 @@ if (absences.length === 0 && conges.length === 0 && heuresSup.length === 0) {
         htmlContentConges += `<td>${conge.employe.nom}</td>`;
         htmlContentConges += `<td>${formattedDateDebut}</td>`;
         htmlContentConges += `<td>${formattedDateFin}</td>`;
-        if (conge.statut === '1') {
-        htmlContentConges += `<td><span class="badge bg-success">Justifié</span></td>`;
-        } else {
-        htmlContentConges += `<td><span class="badge bg-danger">Non justifié</span></td>`;
-        }
+        htmlContentConges += `<td><span class="badge bg-${conge.statut ? 'success' : 'danger'}">${conge.statut ? 'Justifié' : 'Non justifié'}</span></td>`;
         htmlContentConges += `<td>${conge.typeConge}</td>`;
         htmlContentConges += '</tr>';
         nombreCongesTotal++; // Incrémenter le nombre total de congés

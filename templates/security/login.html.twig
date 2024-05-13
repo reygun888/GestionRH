@@ -8,8 +8,7 @@
 		{% set targetPath = path('accueil') %}
 		{% if app.request.query.has('redirect_to') %}
 			{% set targetPath = app.request.query.get('redirect_to') %}
-		{% endif %}
-
+	{% endif %}
 		<script>
 			setTimeout(function () {
 window.location.href = '{{ targetPath }}';
@@ -17,18 +16,15 @@ window.location.href = '{{ targetPath }}';
 		</script>
 	{% endif %}
 	<form method="post" class="container text-center p-0">
-
 		{% if error %}
 			<div class="alert alert-danger mt-5">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 		{% endif %}
-
 		<section class="vh-100 mt-5">
 			<div class="container py-5 h-75">
 				<div class="row d-flex justify-content-center align-items-center h-100">
 					<div class="col-12 col-md-8 col-lg-6 col-xl-5">
 						<div class="card cardLogin" style="border-radius: 1rem;">
 							<div class="card-body  px-5 py-4 text-center">
-
 								<div class="mb-md-5 mt-md-4 pb-5">
 									<img src="{{asset("images/ressourcesLogo.png")}}" id="logoCo" width="70%" class="mb-4">
 									<h2 class="mt-3 mb-5">Connectez-vous</h2>
@@ -42,8 +38,6 @@ window.location.href = '{{ targetPath }}';
 									</div>
 
 									<button class="btn btn-outline-dark btn-lg px-4" type="submit">Se connecter</button>
-
-
 								</div>
 
 								<div>
@@ -51,7 +45,6 @@ window.location.href = '{{ targetPath }}';
 										<a href="{{path("inscription")}}" class="text-50 fw-bold">S'incscrire</a>
 									</p>
 								</div>
-
 							</div>
 						</div>
 					</div>
